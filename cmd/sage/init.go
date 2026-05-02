@@ -10,15 +10,10 @@ import (
 	"strings"
 
 	"github.com/gintorust/clone-sage/internal/detect"
+	"github.com/gintorust/clone-sage/internal/model"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
-
-type CloneSageConfig struct {
-	Version  int                    `yaml:"version"`
-	Defaults map[string]interface{} `yaml:"defaults"`
-	Checks   []detect.CheckConfig   `yaml:"checks"`
-}
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -36,7 +31,7 @@ and automatically generates a tailored sage-auto.yaml configuration file.`,
 
 		discoveredChecks := detect.ScanRepo()
 
-		config := CloneSageConfig{
+		config := model.CloneSageConfig{
 			Version: 1,
 			Defaults: map[string]interface{}{
 				"strict":     true,

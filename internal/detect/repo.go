@@ -1,26 +1,21 @@
 package detect
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/gintorust/clone-sage/internal/model"
+)
 
 
-type CheckConfig struct {
-	Name string                `yaml:"name"`
-	Type string                `yaml:"type"`
-	Severity string            `yaml:"severity"`
-	Options map[string]string  `yaml:"options"`
-	Message string             `yaml:"message"`
-	Fix string                 `yaml:"fix"`
-}
-
-func ScanRepo() []CheckConfig{
-	var allChecks []CheckConfig
+func ScanRepo() []model.CheckConfig{
+	var allChecks []model.CheckConfig
 
 	allChecks = append(allChecks, detectGo()...)
 	allChecks = append(allChecks, detectNode()...)
 	allChecks = append(allChecks, detectDocker()...)
 
 	if fileExists("Makefile") {
-		allChecks = append(allChecks, CheckConfig{
+		allChecks = append(allChecks, model.CheckConfig{
 			Name:     "make-installed",
 			Type:     "command_exists",
 			Severity: "blocker",
@@ -30,7 +25,7 @@ func ScanRepo() []CheckConfig{
 	}
 
 	if fileExists("Taskfile.yml") || fileExists("Taskfile.yaml") {
-		allChecks = append(allChecks, CheckConfig{
+		allChecks = append(allChecks, model.CheckConfig{
 			Name:     "task-installed",
 			Type:     "command_exists",
 			Severity: "blocker",
@@ -41,7 +36,7 @@ func ScanRepo() []CheckConfig{
 	}
 
 	if fileExists(".tool-versions") {
-		allChecks = append(allChecks, CheckConfig{
+		allChecks = append(allChecks, model.CheckConfig{
 			Name:     "asdf-installed",
 			Type:     "command_exists",
 			Severity: "warning",
@@ -51,7 +46,7 @@ func ScanRepo() []CheckConfig{
 	}
 
 	if fileExists(".env.example"){
-		allChecks = append(allChecks, CheckConfig{
+		allChecks = append(allChecks, model.CheckConfig{
 			Name:     "env-file-exists",
 			Type:     "file_exists",
 			Severity: "blocker",
@@ -62,7 +57,7 @@ func ScanRepo() []CheckConfig{
 
 		keys := extractEnvKeys(".env.example")
 		for _, key := range keys {
-			allChecks = append(allChecks, CheckConfig{
+			allChecks = append(allChecks, model.CheckConfig{
 				Name:     strings.ToLower(key) + "-configured",
 				Type:     "env_exists",
 				Severity: "blocker",

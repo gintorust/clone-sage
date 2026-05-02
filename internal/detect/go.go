@@ -1,10 +1,12 @@
 package detect
 
-func detectGo() []CheckConfig {
-	var checks []CheckConfig
+import "github.com/gintorust/clone-sage/internal/model"
+
+func detectGo() []model.CheckConfig {
+	var checks []model.CheckConfig
 
 	if fileExists("go.mod") {
-		checks = append(checks, CheckConfig{
+		checks = append(checks, model.CheckConfig{
 			Name:     "go-installed",
 			Type:     "command-exists",
 			Severity: "blocker",
