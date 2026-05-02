@@ -6,28 +6,30 @@ package sage
 import (
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/gintorust/clone-sage/internal/detect"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
-type CloneSageConfig struct{
-	Version int                     `yaml:"version"`
+type CloneSageConfig struct {
+	Version  int                    `yaml:"version"`
 	Defaults map[string]interface{} `yaml:"defaults"`
-    Checks []detect.CheckConfig     `yaml:"checks"`
+	Checks   []detect.CheckConfig   `yaml:"checks"`
 }
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Generate a clonesage-auto.yaml file based on repository inference",
+	Short: "Generate a sage-auto.yaml file based on repository inference",
 	Long: `Scans the current directory for project files (go.mod, package.json, .env.example) 
-and automatically generates a tailored clonesage-auto.yaml configuration file.`,
-	RunE: func(cmd *cobra.Command, args []string) error{
-		_,err := os.Stat("clonesage-auto.yaml")
+and automatically generates a tailored sage-auto.yaml configuration file.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		_, err := os.Stat("sage-auto.yaml")
 		if err == nil {
-			return fmt.Errorf("clonesage-auto.yaml already exists. Please delete or rename the existing file before running 'sage init'")
+			return fmt.Errorf("sage-auto.yaml already exists. Please delete or rename the existing file before running 'sage init'")
 		}
 
 		fmt.Println("Scanning repo...")
@@ -37,7 +39,7 @@ and automatically generates a tailored clonesage-auto.yaml configuration file.`,
 		config := CloneSageConfig{
 			Version: 1,
 			Defaults: map[string]interface{}{
-				"strict": true,
+				"strict":     true,
 				"timeout_ms": 3000,
 			},
 			Checks: discoveredChecks,
@@ -48,12 +50,23 @@ and automatically generates a tailored clonesage-auto.yaml configuration file.`,
 			return fmt.Errorf("Failed to generate yaml file: %w", err)
 		}
 
-		err = os.WriteFile("clonesage-auto.yaml", yamlData, 0644)
+		yamlString := string(yamlData)
+
+		yamlString = strings.Replace(yamlString, "\nchecks:", "\n\nchecks:", 1)
+
+		re := regexp.MustCompile(`\n(\s*- name:)`)
+		yamlString = re.ReplaceAllString(yamlString, "\n\n$1")
+		
+		yamlString = strings.ReplaceAll(yamlString, "\n\n\n", "\n\n")
+
+		finalYamlData := []byte(yamlString)
+
+		err = os.WriteFile("sage-auto.yaml", finalYamlData, 0644)
 		if err != nil {
-			return fmt.Errorf("failed to write clonesage.yaml: %w", err)
+			return fmt.Errorf("failed to write sage.yaml: %w", err)
 		}
 
-		fmt.Printf("Success! Generated clonesage.yaml with %d inferred checks.\n", len(discoveredChecks))
+		fmt.Printf("Success! Generated sage-auto.yaml with %d inferred checks.\n", len(discoveredChecks))
 		return nil
 
 	},
