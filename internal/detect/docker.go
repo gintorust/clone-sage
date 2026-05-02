@@ -1,10 +1,12 @@
 package detect
 
-func detectDocker() []CheckConfig {
-	var checks []CheckConfig
+import "github.com/gintorust/clone-sage/internal/model"
+
+func detectDocker() []model.CheckConfig {
+	var checks []model.CheckConfig
 
 	if fileExists("docker-compose.yml") || fileExists("compose.yaml") || fileExists("docker-compose.yaml") {
-		checks = append(checks, CheckConfig{
+		checks = append(checks, model.CheckConfig{
 			Name:     "docker-installed",
 			Type:     "command_exists",
 			Severity: "warning", 
