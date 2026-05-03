@@ -1,5 +1,5 @@
 # The name of the binary we want to build
-BINARY_NAME=clonesage
+BINARY_NAME=sage
 # The entry point of our application
 MAIN_PATH=main.go
 
