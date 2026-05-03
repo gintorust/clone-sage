@@ -2,6 +2,7 @@ package config
 
 import "github.com/gintorust/clone-sage/internal/model"
 
+// this function is to ensure that the system always has defaults to fallback to
 func mergeDefaults(c *model.CloneSageConfig) {
 	if c.Defaults == nil {
 		c.Defaults = make(map[string]interface{})
