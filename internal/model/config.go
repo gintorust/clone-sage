@@ -11,9 +11,10 @@ type CloneSageConfig struct {
 type CheckConfig struct {
 	Name     string            `yaml:"name"`
 	Type     string            `yaml:"type"`
+	Quick    bool              `yaml:"quick"`
 	Severity string            `yaml:"severity"`
 	Options  map[string]string `yaml:"options"`
 	Message  string            `yaml:"message"`
-	Why      string            `yaml:"why,omitempty"` 
+	Why      string            `yaml:"why,omitempty"`
 	Fix      string            `yaml:"fix,omitempty"`
 }
