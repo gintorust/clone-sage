@@ -8,7 +8,7 @@ func detectGo() []model.CheckConfig {
 	if fileExists("go.mod") {
 		checks = append(checks, model.CheckConfig{
 			Name:     "go-installed",
-			Type:     "command-exists",
+			Type:     "command_exists",
 			Severity: "blocker",
 			Options:  map[string]string{"command": "go"},
 			Message:  "Go is required for this repository",
